@@ -145,3 +145,17 @@ def test_project_name_defaults_to_wav_stem(
     window._generate_project()
 
     assert calls["project_name"] == "My Sample"
+
+
+@pytest.mark.parametrize("label, name", [
+    ("Dorian", "dorian"), ("Minor Pentatonic", "minor_pentatonic"),
+    ("Diminished Half Whole", "diminished_half_whole"),
+])
+def test_gui_selects_expanded_scales(qt_app, label, name):
+    window = MainWindow()
+    window.scale_combo.setCurrentText(label)
+    window.start_octave_spin.setValue(-1)
+    spec = window._build_spec()
+    assert spec.scale == name
+    assert len(spec.build_offsets()) == 16
+    window.close()

@@ -8,6 +8,7 @@ from mpctk.generation import (
 )
 from mpctk.music import (
     BankSpec,
+    SCALES,
     LAYOUT_CHROMATIC_KEYBOARD,
     LAYOUT_SCALE_PADS,
 )
@@ -18,10 +19,7 @@ CLI_LAYOUTS = {
     "scale-pads": LAYOUT_SCALE_PADS,
 }
 
-CLI_SCALES = {
-    "major": "major",
-    "natural-minor": "natural_minor",
-}
+CLI_SCALES = {name.replace("_", "-"): name for name in SCALES}
 
 
 def build_parser() -> argparse.ArgumentParser:

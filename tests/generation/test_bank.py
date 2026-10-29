@@ -217,3 +217,34 @@ def test_build_bank_from_pad_address_starts_inside_bank():
         track.instruments[12].layers[0].sample.name
         == "Sample"
     )
+
+
+@pytest.mark.parametrize("scale", ["minor_pentatonic", "hirajoshi", "in_sen", "iwato", "yo"])
+def test_sparse_scales_reject_overflow_without_mutating_track(scale):
+    track = make_track()
+    before = track.raw_data
+    import copy
+    before = copy.deepcopy(before)
+    spec = BankSpec(source_root="C", target_root="C", layout=LAYOUT_SCALE_PADS,
+                    scale=scale, pads=16)
+    with pytest.raises(ValueError, match="requested 0 to 36"):
+        build_bank_with_mpc_tuning(track, spec)
+    assert track.raw_data == before
+
+
+def test_dorian_bank_serialization_preserves_tuning(tmp_path):
+    track = make_track()
+    spec = BankSpec(source_root="C", target_root="D", layout=LAYOUT_SCALE_PADS,
+                    scale="dorian", pads=16, start_octave=-1)
+    build_bank_with_mpc_tuning(track, spec)
+    from mpctk.xpj import XPJHeader, XPJReader, XPJWriter
+    header = XPJHeader(magic="ACVS", version="1.3.0.12",
+                       data_type="SerialisableProjectData",
+                       serialization_format="json", platform="Linux")
+    output = tmp_path / "Dorian.xpj"
+    XPJWriter().write(output, header, {"data": {"tracks": [track.raw_data]}})
+    _, data = XPJReader().read(output)
+    restored = Track.from_dict(data["data"]["tracks"][0])
+    assert [i.layers[0].coarse_tune for i in restored.instruments[:16]] == [
+        -10, -8, -7, -5, -3, -1, 0, 2, 4, 5, 7, 9, 11, 12, 14, 16,
+    ]

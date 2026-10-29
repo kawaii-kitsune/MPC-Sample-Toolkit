@@ -4,19 +4,11 @@ from .layouts import (
     build_chromatic_offsets,
     build_scale_pad_offsets,
 )
-from .scales import (
-    MAJOR_INTERVALS,
-    NATURAL_MINOR_INTERVALS,
-)
+from .scales import SCALES
 
 
 LAYOUT_CHROMATIC_KEYBOARD = "chromatic_keyboard"
 LAYOUT_SCALE_PADS = "scale_pads"
-
-SCALES = {
-    "major": MAJOR_INTERVALS,
-    "natural_minor": NATURAL_MINOR_INTERVALS,
-}
 
 
 @dataclass(frozen=True)

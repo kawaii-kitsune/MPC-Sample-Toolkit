@@ -114,7 +114,7 @@ def test_bank_spec_rejects_unknown_scale():
         source_root="C",
         target_root="C",
         layout=LAYOUT_SCALE_PADS,
-        scale="dorian",
+        scale="not_a_scale",
         pads=8,
     )
 
@@ -153,3 +153,11 @@ def test_bank_spec_rejects_zero_pads():
         match="greater than zero",
     ):
         spec.build_offsets()
+
+
+def test_dorian_transposes_across_octaves():
+    spec = BankSpec(source_root="C", target_root="D", layout=LAYOUT_SCALE_PADS,
+                    scale="dorian", pads=16, start_octave=-1)
+    assert spec.build_offsets() == [
+        -10, -8, -7, -5, -3, -1, 0, 2, 4, 5, 7, 9, 11, 12, 14, 16,
+    ]

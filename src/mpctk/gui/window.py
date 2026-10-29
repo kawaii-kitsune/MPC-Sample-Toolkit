@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
 from mpctk.generation import BANK_NAMES, generate_project_package
 from mpctk.music import (
     BankSpec,
+    SCALES as SCALE_INTERVALS,
     LAYOUT_CHROMATIC_KEYBOARD,
     LAYOUT_SCALE_PADS,
 )
@@ -47,10 +48,7 @@ LAYOUTS = {
     "Chromatic Keyboard": LAYOUT_CHROMATIC_KEYBOARD,
 }
 
-SCALES = {
-    "Major": "major",
-    "Natural Minor": "natural_minor",
-}
+SCALES = {name.replace("_", " ").title(): name for name in SCALE_INTERVALS}
 
 
 class MainWindow(QMainWindow):

@@ -170,3 +170,24 @@ def test_cli_rejects_invalid_bank():
         )
 
     assert exc.value.code == 2
+
+
+@pytest.mark.parametrize("scale, expected", [
+    ("dorian", [2, 4, 5, 7, 9, 11, 12, 14]),
+    ("minor-pentatonic", [2, 5, 7, 9, 12, 14, 17, 19]),
+    ("diminished-half-whole", [2, 3, 5, 6, 8, 9, 11, 12]),
+])
+def test_cli_expanded_scale_reaches_generation(monkeypatch, tmp_path, scale, expected):
+    captured = {}
+
+    def generate(**kwargs):
+        captured.update(kwargs)
+        return tmp_path / "test.xpj", tmp_path / "test_[ProjectData]"
+
+    monkeypatch.setattr(cli, "generate_project_package", generate)
+    assert cli.main([
+        "generate", "sample.wav", "--template", "template.xpj",
+        "--source-root", "C", "--target-root", "D", "--layout", "scale-pads",
+        "--scale", scale, "--pads", "8", "--output", str(tmp_path),
+    ]) == 0
+    assert captured["spec"].build_offsets() == expected

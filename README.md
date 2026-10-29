@@ -15,7 +15,7 @@ MPCTK currently provides:
 - preservation of unknown XPJ fields while editing known data;
 - coarse-tune editing and layer cloning;
 - chromatic pad-bank generation;
-- major and natural minor Scale Pad layouts;
+- 22 equal-tempered Scale Pad layouts;
 - source-root to target-root transposition;
 - MPC Bank A-H / Pad 1-16 addressing;
 - WAV injection into MPC projects;
@@ -79,7 +79,7 @@ Current controls include:
 - XPJ structural template;
 - Source Root and Target Root;
 - Scale Pads or Chromatic Keyboard layout;
-- Major or Natural Minor scale;
+- 22 scale choices;
 - pad count, starting bank, starting pad, and starting octave;
 - project name and destination.
 
@@ -121,10 +121,25 @@ The resulting pair can be transferred to the MPC Sample.
 
 ### Scale Pads
 
-Currently implemented scales:
+Available in both CLI and GUI (CLI uses hyphens; Python uses underscores):
 
-- `major`
-- `natural-minor`
+- Modes: major (Ionian), natural-minor (Aeolian), dorian, phrygian,
+  lydian, mixolydian, locrian.
+- Pentatonic/blues: major-pentatonic, minor-pentatonic, blues.
+- Minor variants: harmonic-minor, melodic-minor (ascending form in both directions).
+- Other collections: phrygian-dominant, double-harmonic, hungarian-minor,
+  hirajoshi, in-sen, iwato, yo, whole-tone, diminished-whole-half,
+  diminished-half-whole.
+
+These are fixed twelve-tone equal-tempered pitch collections. The Japanese-named
+presets use the explicit intervals in `src/mpctk/music/scales.py`; names and
+variants differ between traditions. Phrygian dominant is not a complete maqam
+Hijaz implementation. No microtonal tuning or traditional melodic rules are implied.
+
+For D Dorian from a C source, use `--scale dorian --source-root C --target-root D`.
+For 16 pads, `--start-octave -1` helps keep the bank within the -24 to +24 tuning
+range. Sparse scales span more octaves; out-of-range banks are rejected, never
+silently clamped. Existing `major` and `natural-minor` commands are unchanged.
 
 Example:
 
@@ -172,7 +187,7 @@ This separation also leaves room for future rendered/hybrid audio transposition 
 
 - project generation still requires an XPJ structural template;
 - generation currently uses MPC real-time tuning rather than rendered transposed WAVs;
-- implemented scale choices are currently major and natural minor;
+- scale layouts use twelve-tone equal temperament; custom and microtonal scales are not yet exposed;
 - automatic pitch/root detection is not implemented;
 - multi-bank project requests are not yet exposed as one user-facing specification;
 - the macOS application has been validated locally but is not yet a signed/notarized public distribution.
